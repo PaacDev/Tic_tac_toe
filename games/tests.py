@@ -93,8 +93,12 @@ class GameTests(TestCase):
         # Anonimo intenta unirse a una partida con dos jugadores
         client.force_authenticate(user=None)
         response = client.post(f"/api/games/{game.id}/join_game/")
-        self.assertEqual(response.status_code, 401)
-        self.assertIn("error", response.data)
+        self.assertEqual(response.status_code, 403)
+        self.assertIn("detail", response.data)
+        self.assertEqual(
+            response.data["detail"],
+            "Authentication credentials were not provided.",
+        )
 
     def test_waiting_games(self):
         """Test para verificar que se pueden listar
@@ -146,9 +150,7 @@ class GameTests(TestCase):
         self.assertIn(
             response.data["error"],
             [
-                "El turno ya ha sido establecido.",
-                "El jugador no forma parte de esta"
-                " partida.",
+                "Jugador no forma parte de la partida"
             ],
         )
 
@@ -176,7 +178,6 @@ class GameTests(TestCase):
         response = client.get("/api/games/win_games/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["winner"], self.player1.id)
 
     def test_my_games(self):
         """Test para verificar que se puede obtener

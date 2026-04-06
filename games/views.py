@@ -1,23 +1,25 @@
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from players.models import Player
+from rest_framework.permissions import IsAuthenticated
 from .models import Game
 from .serializers import GameSerializer
 from .services import validators, game_logic
 
 
-class GameViewSet(viewsets.ModelViewSet):
+class GameViewSet(viewsets.ReadOnlyModelViewSet):
     """ViewSet para manejar las operaciones CRUD y acciones
     personalizadas relacionadas con el modelo Game."""
 
     queryset = Game.objects.all()
     serializer_class = GameSerializer
+    permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=["post"])
     def new_game(self, request):
         """Crea una nueva partida y devuelve su información básica."""
-        player1 = Player.objects.get(user=request.user)
+
+        player1 = request.user.player
         game = Game.objects.create(player1=player1)
         # Solo incluimos los campos necesarios para mostrar
         # la información básica de la partida recién creada
@@ -29,6 +31,7 @@ class GameViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"])
     def waiting_games(self, request):
         """Devuelve partidas esperando oponente."""
+
         waiting_games = Game.objects.filter(status="waiting")
         # Solo incluimos los campos necesarios para mostrar la lista
         # de partidas esperando oponente
@@ -41,11 +44,7 @@ class GameViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"])
     def join_game(self, request, pk=None):
         """Permite unirse a una partida esperando oponente."""
-        if request.user.is_anonymous:
-            return Response(
-                {"error": "Debe iniciar sesión para unirse."},
-                status=status.HTTP_401_UNAUTHORIZED,
-            )
+
         game = self.get_object()
         if game.status != "waiting":
             return Response(
@@ -53,7 +52,7 @@ class GameViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        player2 = Player.objects.get(user=request.user)
+        player2 = request.user.player
         # Validamos que jugador no sea player1 y no esté en la partida
         if validators.is_valid_player(player2, game):
             return Response(
@@ -74,11 +73,12 @@ class GameViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"])
     def set_current_turn(self, request, pk=None):
         """Asigna turno inicial. Solo una vez por partida."""
+
         game = self.get_object()
 
         # Verificar que jugador es parte de partida y turno sin asignar
         if not validators.is_valid_player(
-            Player.objects.get(user=request.user), game
+            request.user.player, game
         ):
             return Response(
                 {"error": "Jugador no forma parte de la partida"},
@@ -91,7 +91,7 @@ class GameViewSet(viewsets.ModelViewSet):
             )
 
         # Asignamos turno al jugador y actualizamos la partida
-        game.current_turn = Player.objects.get(user=request.user)
+        game.current_turn = request.user.player
         game.save()
         # Campo del turno actual para mostrar quién juega
         serializer = self.get_serializer(game, fields=("current_turn",))
@@ -100,7 +100,8 @@ class GameViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"])
     def win_games(self, request):
         """Devuelve partidas ganadas por el jugador."""
-        player = Player.objects.get(user=request.user)
+
+        player = request.user.player
         won_games = Game.objects.filter(winner=player)
         serializer = self.get_serializer(
             won_games, many=True, fields=("id", "player1", "player2")
@@ -110,7 +111,8 @@ class GameViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"])
     def my_games(self, request):
         """Devuelve partidas del jugador como player1 o player2."""
-        player = Player.objects.get(user=request.user)
+
+        player = request.user.player
         my_games = (
             Game.objects.filter(player1=player)
             | Game.objects.filter(player2=player)
@@ -126,6 +128,7 @@ class GameViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"])
     def make_move(self, request, pk=None):
+
         game = self.get_object()
 
         result = game_logic.move(
@@ -134,7 +137,7 @@ class GameViewSet(viewsets.ModelViewSet):
         )
 
         if result["error"]:
-            return Response(result, status=400)
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
 
         if result["data"]:
             # Guardamos cambios antes de devolver resultado
@@ -144,5 +147,4 @@ class GameViewSet(viewsets.ModelViewSet):
         # Guardamos cambios después del movimiento
         game.save()
         serializer = self.get_serializer(game, fields=("board_matrix",))
-        print("Serializer data: ", serializer.data)
         return Response(serializer.data)
