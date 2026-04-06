@@ -93,7 +93,7 @@ class GameTests(TestCase):
         # Anonimo intenta unirse a una partida con dos jugadores
         client.force_authenticate(user=None)
         response = client.post(f"/api/games/{game.id}/join_game/")
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
         self.assertIn("detail", response.data)
         self.assertEqual(
             response.data["detail"],
@@ -115,7 +115,7 @@ class GameTests(TestCase):
         response = client.get("/api/games/waiting_games/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["player1"], self.player1.id)
+        self.assertEqual(response.data[0]["player1_name"], self.player1.name)
 
     def test_set_current_turn(self):
         """Test para verificar que se puede asignar
@@ -352,3 +352,30 @@ class GameTests(TestCase):
         )
         self.assertEqual(response.status_code, 400)
         self.assertIn("error", response.data)
+
+    def test_game_state(self):
+        """Test para verificar que se puede obtener el estado
+        actual de la partida, incluyendo el tablero y el turno."""
+
+        game = Game.objects.create(
+            player1=self.player1,
+            player2=self.player2,
+            status="ongoing",
+            current_turn=self.player1,
+            board_state="XOXOXO---",
+        )
+
+        client = APIClient()
+        client.force_authenticate(user=self.user1)
+
+        response = client.get(f"/api/games/{game.id}/game_state/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("board_matrix", response.data)
+        self.assertIn("current_turn_name", response.data)
+        self.assertIn("status", response.data)
+        self.assertEqual(
+            response.data["board_matrix"],
+            [["X", "O", "X"], ["O", "X", "O"], ["-", "-", "-"]],
+        )
+        self.assertEqual(response.data["current_turn_name"], self.player1.name)
+        self.assertEqual(response.data["status"], "ongoing")

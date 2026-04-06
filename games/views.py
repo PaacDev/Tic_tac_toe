@@ -36,7 +36,7 @@ class GameViewSet(viewsets.ReadOnlyModelViewSet):
         # Solo incluimos los campos necesarios para mostrar la lista
         # de partidas esperando oponente
         serializer = self.get_serializer(
-            waiting_games, many=True, fields=("id", "player1")
+            waiting_games, many=True, fields=("id", "player1_name")
         )
 
         return Response(serializer.data)
@@ -94,7 +94,7 @@ class GameViewSet(viewsets.ReadOnlyModelViewSet):
         game.current_turn = request.user.player
         game.save()
         # Campo del turno actual para mostrar quién juega
-        serializer = self.get_serializer(game, fields=("current_turn",))
+        serializer = self.get_serializer(game, fields=("current_turn_name",))
         return Response(serializer.data)
 
     @action(detail=False, methods=["get"])
@@ -104,7 +104,7 @@ class GameViewSet(viewsets.ReadOnlyModelViewSet):
         player = request.user.player
         won_games = Game.objects.filter(winner=player)
         serializer = self.get_serializer(
-            won_games, many=True, fields=("id", "player1", "player2")
+            won_games, many=True, fields=("id", "player1_name", "player2_name")
         )
         return Response(serializer.data)
 
@@ -147,4 +147,14 @@ class GameViewSet(viewsets.ReadOnlyModelViewSet):
         # Guardamos cambios después del movimiento
         game.save()
         serializer = self.get_serializer(game, fields=("board_matrix",))
+        return Response(serializer.data)
+
+    @action(detail=True, methods=["get"])
+    def game_state(self, request, pk=None):
+        """Devuelve el estado actual de la partida, incluyendo el tablero y el turno."""
+
+        game = self.get_object()
+        serializer = self.get_serializer(
+            game, fields=("board_matrix", "current_turn_name", "status")
+        )
         return Response(serializer.data)

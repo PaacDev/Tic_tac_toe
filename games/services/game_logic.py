@@ -28,6 +28,10 @@ def move(game, player, fila, columna):
         result["error"] = "El juego no está en progreso."
         return result
 
+    if not validators.is_valid_player(player, game):
+        result["error"] = "Jugador no forma parte de la partida."
+        return result
+
     if not validators.is_valid_turn(player, game.current_turn):
         result["error"] = "No es tu turno."
         return result

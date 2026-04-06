@@ -1,5 +1,5 @@
 from django.test import TestCase
-
+from rest_framework.test import APIClient
 
 class APICoreTests(TestCase):
     def test_register_user(self):
@@ -57,15 +57,21 @@ class APICoreTests(TestCase):
 
     def test_get_current_user(self):
         # Test obtener usuario actual
+        self.client = APIClient()
         self.client.post("/register/", {"username": "testuser", "password": "testpass"})
-        self.client.post("/login/", {"username": "testuser", "password": "testpass"})
+        self.token = self.client.post(
+            "/api/token/", {"username": "testuser", "password": "testpass"}
+        ).data.get("access")
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.token)
         response = self.client.get("/current_user/")
         self.assertEqual(response.status_code, 200)
         self.assertIn("username", response.data)
         self.assertEqual(response.data["username"], "testuser")
 
+
     def test_get_current_user_unauthenticated(self):
         # Test obtener usuario actual sin autenticación
+        # Reiniciamos el cliente para eliminar credenciales
         response = self.client.get("/current_user/")
         self.assertEqual(response.status_code, 401)
         self.assertIn("error", response.data)
