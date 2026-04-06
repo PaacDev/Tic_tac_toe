@@ -51,7 +51,7 @@ def move(game, player, fila, columna):
         game.current_turn = game.player1
 
     game.board_state = "".join(board)
-    game.moves = game.moves + f"{player.name}:{position};"
+    game.moves = game.moves + f"{player.name}: ({fila}, {columna}); "
 
     # Verificar si hay un ganador
     winner_token = validators.check_winner(game.board_state)

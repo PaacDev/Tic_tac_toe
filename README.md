@@ -72,15 +72,14 @@ python manage.py runserver
 
 ### 4) Probar endpoints
 
-- Partidas: <http://127.0.0.1:8000/api/games/>
-- Jugadores: <http://127.0.0.1:8000/api/players/>
-- Login DRF (navegable): <http://127.0.0.1:8000/api-auth/login/>
+Puedes usar herramientas como Postman o cURL para probar los 
+endpoints descritos a continuación.
+
+La mayoría de endpoints requieren usuario autenticado.
 
 ---
 
-## Autenticación
-
-La mayoría de endpoints requieren usuario autenticado.
+## Registro y Autenticación
 
 ### Registro
 
@@ -105,7 +104,38 @@ La mayoría de endpoints requieren usuario autenticado.
 
 ### Login
 
-`POST /login/`
+Se ha implementado un login de sesión tradicional para facilitar pruebas con el navegador. Para autenticación basada en tokens JWT, se pueden usar los endpoints de `rest_framework_simplejwt`:
+
+Login JWT: `POST /api/token/`
+**Request**
+
+```json
+{
+  "username": "juan",
+  "password": "12345"
+}
+```
+
+**Response**
+
+```json
+{
+  "refresh": "TOKEN_REFRESH",
+  "access": "TOKEN_ACCESS"
+}
+```
+
+Refresh JWT: `POST /api/token/refresh/`
+
+**Response**
+
+```json
+{
+  "access": "NEW_TOKEN_ACCESS"
+}
+```
+
+Login tradicional de sesión: `POST /login/`
 
 **Request**
 
@@ -143,14 +173,14 @@ La mayoría de endpoints requieren usuario autenticado.
 ```json
 {
   "id": 1,
-  "player1": "juan",
+  "player1_name": "juan",
   "status": "waiting"
 }
 ```
 
 ---
 
-### Listar partidas esperando oponente
+### Listar partidas que esperan oponente
 
 `GET /api/games/waiting_games/`
 
@@ -158,8 +188,8 @@ La mayoría de endpoints requieren usuario autenticado.
 
 ```json
 [
-  { "id": 1, "player1": 1 },
-  { "id": 2, "player1": 2 }
+  { "id": 1, "player1_name": "juan" },
+  { "id": 2, "player1_name": "maria" }
 ]
 ```
 
@@ -178,12 +208,14 @@ La mayoría de endpoints requieren usuario autenticado.
 ```json
 {
   "id": 1,
-  "player1": 1,
-  "player2": 2,
+  "player1_name": "juan",
+  "player2_name": "maria",
   "status": "ongoing"
 }
 ```
 ### Turno inicial
+
+Asignar el turno inicial a un jugador.
 
 El jugador que realiza la solicitud a este endpoint tendrá el primer turno.
 
@@ -199,7 +231,7 @@ El jugador que realiza la solicitud a este endpoint tendrá el primer turno.
 
 ```json
 {
-    "current_turn": 1
+    "current_turn_name": "juan"
 }
 ```
 
@@ -207,6 +239,8 @@ El jugador que realiza la solicitud a este endpoint tendrá el primer turno.
 ### Hacer un movimiento
 
 `POST /api/games/{id}/make_move/`
+
+La representación del tablero es una matriz 3x3
 
 **Request**
 
@@ -225,6 +259,14 @@ El jugador que realiza la solicitud a este endpoint tendrá el primer turno.
 }
 ```
 
+La  interpretación de la matriz es la siguiente:
+- "X" representa las casillas ocupadas por el jugador 1.
+- "O" representa las casillas ocupadas por el jugador 2.
+- "-" representa las casillas vacías.
+
+- La primera lista corresponde a la fila 0, la segunda a la fila 1 y la tercera a la fila 2.
+- Dentro de cada lista, el primer elemento corresponde a la columna 0, el segundo a la columna 1 y el tercero a la columna 2.
+
 ---
 
 ### Listar partidas ganadas por un jugador
@@ -235,8 +277,8 @@ El jugador que realiza la solicitud a este endpoint tendrá el primer turno.
 
 ```json
 [
-  { "id": 1, "player1": 1, "player2": 2 },
-  { "id": 2, "player1": 2, "player2": 1 }
+  { "id": 1, "player1_name": "juan", "player2_name": "maria" },
+  { "id": 2, "player1_name": "maria", "player2_name": "juan" }
 ]
 ```
 
@@ -248,8 +290,11 @@ El jugador que realiza la solicitud a este endpoint tendrá el primer turno.
 
 ```json
 [
-  { "id": 1, "player1": 1, "player2": 2, "status": "ongoing", "moves": "" },
-  { "id": 2, "player1": 2, "player2": 1, "status": "ongoing", "moves": "" }
+  { "id": 1, "player1_name": "juan", "player2_name": "maria", "status": "ongoing", "moves": "" },
+  { "id": 2, "player1_name": "maria", "player2_name": "juan", "status": "ongoing", "moves": "" }
 ]
 
 ```
+
+El campo "moves" es una cadena con el formato: nombre_jugador: (fila, columna); nombre_jugador: (fila, columna); ... representando la secuencia de movimientos realizados en la partida.
+Ejemplo: "juan: (0, 0); maria: (1, 1); juan: (0, 1); maria: (2, 2); juan: (0, 2);"

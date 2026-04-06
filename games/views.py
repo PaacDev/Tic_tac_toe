@@ -24,7 +24,7 @@ class GameViewSet(viewsets.ReadOnlyModelViewSet):
         # Solo incluimos los campos necesarios para mostrar
         # la información básica de la partida recién creada
         serializer = self.get_serializer(
-            game, fields=("id", "player1", "status")
+            game, fields=("id", "player1_name", "status")
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -66,7 +66,7 @@ class GameViewSet(viewsets.ReadOnlyModelViewSet):
         game.save()
         # Información de la partida a la que se unió
         serializer = self.get_serializer(
-            game, fields=("id", "player1", "player2", "status")
+            game, fields=("id", "player1_name", "player2_name", "status")
         )
         return Response(serializer.data)
 
@@ -121,7 +121,7 @@ class GameViewSet(viewsets.ReadOnlyModelViewSet):
             my_games,
             many=True,
             fields=(
-                "id", "player1", "player2", "status", "moves"
+                "id", "player1_name", "player2_name", "status", "moves"
             ),
         )
         return Response(serializer.data)
