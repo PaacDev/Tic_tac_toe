@@ -158,8 +158,8 @@ La mayoría de endpoints requieren usuario autenticado.
 
 ```json
 [
-  { "id": "id", "player1": "id" },
-  { "id": "id", "player1": "id" }
+  { "id": 1, "player1": 1 },
+  { "id": 2, "player1": 2 }
 ]
 ```
 
@@ -178,8 +178,8 @@ La mayoría de endpoints requieren usuario autenticado.
 ```json
 {
   "id": 1,
-  "player1": "juan",
-  "player2": "maria",
+  "player1": 1,
+  "player2": 2,
   "status": "ongoing"
 }
 ```
@@ -199,7 +199,7 @@ El jugador que realiza la solicitud a este endpoint tendrá el primer turno.
 
 ```json
 {
-    "current_turn": "id"
+    "current_turn": 1
 }
 ```
 
@@ -235,8 +235,8 @@ El jugador que realiza la solicitud a este endpoint tendrá el primer turno.
 
 ```json
 [
-  { "id": "id", "player1": "id", "player2": "id" },
-  { "id": "id", "player1": "id", "player2": "id" }
+  { "id": 1, "player1": 1, "player2": 2 },
+  { "id": 2, "player1": 2, "player2": 1 }
 ]
 ```
 
@@ -248,8 +248,8 @@ El jugador que realiza la solicitud a este endpoint tendrá el primer turno.
 
 ```json
 [
-  { "id": "id", "player1": "id", "player2": "id", "status": "ongoing", "moves": "" },
-  { "id": "id", "player1": "id", "player2": "id", "status": "ongoing", "moves": "" }
+  { "id": 1, "player1": 1, "player2": 2, "status": "ongoing", "moves": "" },
+  { "id": 2, "player1": 2, "player2": 1, "status": "ongoing", "moves": "" }
 ]
 
 ```
