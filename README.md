@@ -295,6 +295,7 @@ La  interpretación de la matriz es la siguiente:
 ]
 
 ```
+### Log de movimientos
 
-El campo "moves" es una cadena con el formato: nombre_jugador: (fila, columna); nombre_jugador: (fila, columna); ... representando la secuencia de movimientos realizados en la partida.
+El campo "moves" es una cadena con el formato: nombre_jugador: (fila, columna); ... representando la secuencia de movimientos realizados en la partida.
 Ejemplo: "juan: (0, 0); maria: (1, 1); juan: (0, 1); maria: (2, 2); juan: (0, 2);"
