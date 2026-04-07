@@ -176,6 +176,8 @@ Login tradicional de sesión: `POST /login/`
 
 ### Listar partidas que esperan oponente
 
+Una vez creada una partida, esta queda en estado "waiting" hasta que otro jugador se una a ella.
+
 `GET /api/games/waiting_games/`
 
 **Response**
