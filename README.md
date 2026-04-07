@@ -73,6 +73,15 @@ La mayoría de endpoints requieren usuario autenticado.
 
 ---
 
+## URL base
+
+Todos los endpoints descritos a continuación se encuentran bajo la URL base:
+
+`http://127.0.0.1:8000/`
+
+
+---
+
 ## Registro y Autenticación
 
 ### Registro
