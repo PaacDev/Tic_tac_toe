@@ -55,6 +55,5 @@ class GameSerializer(DynamicFieldsModelSerializer):
         ]
 
     def get_board_matrix(self, obj):
-        """Convierte el estado del tablero (cadena de 9 caracteres)
-        en una matriz 3x3 para facilitar su representación en la API."""
-        return [list(obj.board_state[i : i + 3]) for i in range(0, 9, 3)]
+        """Devuelve el tablero como 3 cadenas."""
+        return [obj.board_state[i:i+3] for i in range(0, 9, 3)]

@@ -58,19 +58,13 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 2) Crear superusuario (opcional)
-
-```bash
-python manage.py createsuperuser
-```
-
-### 3) Ejecutar servidor
+### 2) Ejecutar servidor
 
 ```bash
 python manage.py runserver
 ```
 
-### 4) Probar endpoints
+### 3) Probar endpoints
 
 Puedes usar herramientas como Postman o cURL para probar los 
 endpoints descritos a continuación.
@@ -255,17 +249,28 @@ La representación del tablero es una matriz 3x3
 
 ```json
 {
-  "board_matrix": [["X", "-", "O"], ["-", "-", "-"], ["-", "-", "-"]]
+  "board_matrix": [
+    "X-O",
+    "---",
+    "---"
+  ]
 }
 ```
+El tablero se muestra como una lista de tres cadenas, donde cada cadena corresponde a una fila del juego:
 
-La  interpretación de la matriz es la siguiente:
 - "X" representa las casillas ocupadas por el jugador 1.
 - "O" representa las casillas ocupadas por el jugador 2.
 - "-" representa las casillas vacías.
 
-- La primera lista corresponde a la fila 0, la segunda a la fila 1 y la tercera a la fila 2.
-- Dentro de cada lista, el primer elemento corresponde a la columna 0, el segundo a la columna 1 y el tercero a la columna 2.
+La interpretación es la siguiente:
+- El primer elemento de la lista represeta la fila 0
+- El segundo elemento representa la fila 1
+- El tercer elemento representa la fila 2
+
+Dentro de cada cadena, la posición de los caracteres representa las columnas:
+  - El primer carácter corresponde a la columna 0
+  - El segundo carácter corresponde a la columna 1
+  - El tercer carácter corresponde a la columna 2
 
 ---
 
