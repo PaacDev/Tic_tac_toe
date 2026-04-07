@@ -305,4 +305,31 @@ Dentro de cada cadena, la posición de los caracteres representa las columnas:
 ### Log de movimientos
 
 El campo "moves" es una cadena con el formato: nombre_jugador: (fila, columna); ... representando la secuencia de movimientos realizados en la partida.
-Ejemplo: "juan: (0, 0); maria: (1, 1); juan: (0, 1); maria: (2, 2); juan: (0, 2);"
+Ejemplo: "juan: (0, 0); maria: (1, 1); juan: (0, 1); maria: (2, 2); juan: (0, Estado actual de la partida
+
+
+### Obtener estado de la partida
+
+Devuelve el estado actual del juego, incluyendo el tablero, el turno actual y el estado de la partida.
+
+`GET /api/games/{id}/game_state/`
+
+**Response**
+
+
+```json
+{
+  "board_matrix": [
+    "OO-",
+    "XXX",
+    "-O-"
+  ],
+  "current_turn_name": "juan",
+  "status": "ongoing"
+}
+```
+
+- board_matrix → representación actual del tablero (ver interpretación del tablero arriba).
+- current_turn_name → nombre del jugador al que le corresponde jugar.
+- status → estado actual de la partida.
+
