@@ -375,7 +375,7 @@ class GameTests(TestCase):
         self.assertIn("status", response.data)
         self.assertEqual(
             response.data["board_matrix"],
-            [["X", "O", "X"], ["O", "X", "O"], ["-", "-", "-"]],
+            ["XOX", "OXO", "---"],
         )
         self.assertEqual(response.data["current_turn_name"], self.player1.name)
         self.assertEqual(response.data["status"], "ongoing")
