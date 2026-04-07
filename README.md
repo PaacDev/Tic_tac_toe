@@ -110,6 +110,7 @@ Todos los endpoints descritos a continuación se encuentran bajo la URL base:
 Se ha implementado un login de sesión tradicional para facilitar pruebas con el navegador. Para autenticación basada en tokens JWT, se pueden usar los endpoints de `rest_framework_simplejwt`:
 
 Login JWT: `POST /api/token/`
+
 **Request**
 
 ```json
@@ -330,7 +331,7 @@ Devuelve el estado actual del juego, incluyendo el tablero, el turno actual y el
 {
   "board_matrix": [
     "OO-",
-    "XXX",
+    "X-X",
     "-O-"
   ],
   "current_turn_name": "juan",
@@ -341,4 +342,3 @@ Devuelve el estado actual del juego, incluyendo el tablero, el turno actual y el
 - board_matrix → representación actual del tablero (ver interpretación del tablero arriba).
 - current_turn_name → nombre del jugador al que le corresponde jugar.
 - status → estado actual de la partida.
-
