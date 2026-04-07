@@ -305,7 +305,7 @@ Dentro de cada cadena, la posición de los caracteres representa las columnas:
 ### Log de movimientos
 
 El campo "moves" es una cadena con el formato: nombre_jugador: (fila, columna); ... representando la secuencia de movimientos realizados en la partida.
-Ejemplo: "juan: (0, 0); maria: (1, 1); juan: (0, 1); maria: (2, 2); juan: (0, Estado actual de la partida
+Ejemplo: "juan: (0, 0); maria: (1, 1); juan: (0, 1); maria: (2, 2);
 
 
 ### Obtener estado de la partida
